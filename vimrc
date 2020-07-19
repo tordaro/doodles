@@ -4,8 +4,8 @@ set nu
 " Turn on python-mode plugin
 let g:pymode = 1
 
-" Add to sys.path
-let g:pymode_paths = ['/Users/tordaronsen/anaconda3/lib/python3.7/site-packages']
+" Setup default python options (textwidth and other things you want)
+let g:pymode_options = 1
 
 " Turn off plugin's warnings
 let g:pymode_warnings = 1
@@ -20,6 +20,8 @@ let g:pymode_options_colorcolumn = 1
 let g:pymode_run = 1
 " Binds keys to run python code
 let g:pymode_run_bind = '<leader>r'
+" Defaul <leader> is '\'. Remapping to ','
+let mapleader = ","
 
 " Turn on code checking
 let g:pymode_lint = 1
@@ -47,7 +49,17 @@ set modeline
 
 " Map Esc to jj
 imap jj <Esc>
+" Switch between windows using ctrl-h,j,k,l
+nnoremap <C-J> <C-W>j
+nnoremap <C-K> <C-W>k
+nnoremap <C-L> <C-W>l
+nnoremap <C-H> <C-W>h
+" Enable backspace over new lines
+set backspace=indent,eol,start
 
+" Turn on autocompletion support
 let g:pymode_rope = 1
+" Let me write before autocompleting
 set completeopt=menuone,noinsert
 set backspace=indent,eol,start
+let g:pymode_paths = ['/Users/tordaronsen/anaconda3/lib/python3.7/site-packages']
