@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Folders
+extract_nuspec_deps/packages/
+
+# Images
+*.png
