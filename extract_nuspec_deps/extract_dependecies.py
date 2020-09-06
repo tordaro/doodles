@@ -1,15 +1,15 @@
 import re
 import sys
 import zipfile
-import collections
 from pathlib import Path
-from pprint import pprint
+# import networkx as nx
+
+pattern = '<dependency id="(.+)" />'
+compiled_pattern = re.compile(pattern)
 
 
 def get_dependencies(file_path, tally, indent_level=1):
-    print(str(file_path))
-    pattern = '<dependency id="(.+)" />'
-    compiled_pattern = re.compile(pattern)
+
     dir_path = file_path.parent
 
     with zipfile.ZipFile(file_path, 'r') as zip_obj:
@@ -27,23 +27,19 @@ def get_dependencies(file_path, tally, indent_level=1):
                     dependency = match.group(1)
                     package_path = list(dir_path.glob(dependency + '*.nupkg')).pop()
                     if dependency in tally:
-                        tally.append(dependency)
+                        tally[dependency] += 1
                     else:
-                        tally.append(dependency)
-                        print(indent_level * '\t' + get_dependencies(package_path, tally, indent_level+1))
-#                    print(indent_level * '\t' + str(package_path))
-#                    for dep in get_dependencies(package_path, indent_level+1):
-#                        print(dep)
-#    input("Kjør: ")
-    return str(file_path)
+                        tally[dependency] = 1
+                        get_dependencies(package_path, tally, indent_level+1)
 
 
 def main():
     file_path = Path(sys.argv[1])
     # filename = 'npr_code_enhet-0.0.0.6.1.0.3.nupkg'
-    tally = []
-    dependencies = list(get_dependencies(file_path, tally))
-    pprint(collections.Counter(tally))
+    tally = {}
+    get_dependencies(file_path, tally)
+    for dep in sorted(tally, key=tally.get):
+        print(dep,":", tally[dep])
 
 
 if __name__ == '__main__':
