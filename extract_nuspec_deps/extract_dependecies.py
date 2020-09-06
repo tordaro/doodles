@@ -3,6 +3,7 @@ import sys
 import zipfile
 from pathlib import Path
 import networkx as nx
+from matplotlib import pyplot as plt
 
 pattern = '<dependency id="(.+)" />'
 compiled_pattern = re.compile(pattern)
@@ -43,6 +44,21 @@ def main():
         print(dep, degree)
     print('Packages:     ', len(G.nodes))
     print('Dependencies: ', len(G.edges))
+
+    plt.figure()
+    nx.draw_circular(G)
+    plt.savefig("circular.png")
+    plt.show()
+
+    plt.figure()
+    nx.draw_spring(G)
+    plt.savefig("spring.png")
+    plt.show()
+
+    plt.figure()
+    nx.draw_spectral(G)
+    plt.savefig("spectral.png")
+    plt.show()
 
 
 if __name__ == '__main__':
