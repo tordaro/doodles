@@ -35,6 +35,39 @@ def get_dependencies(file_path, G):
                         get_dependencies(package_path, G)
 
 
+def bokeh_plot(G, file_path):
+    from bokeh.io import output_file, show
+    from bokeh.models import (BoxSelectTool, BoxZoomTool, Circle, HoverTool,
+                            MultiLine, NodesAndLinkedEdges, Plot, Range1d, TapTool,
+                            ResetTool, WheelZoomTool, PanTool)
+    from bokeh.palettes import Spectral4
+    from bokeh.plotting import from_networkx
+    
+    plot = Plot(plot_width=1500, plot_height=1000,
+                x_range=Range1d(-1.1,1.1), y_range=Range1d(-1.1,1.1))
+    plot.title.text = f'Dependencies for {file_path}'
+
+    node_hover_tool = HoverTool(tooltips=[("index", "@index")])
+    plot.add_tools(node_hover_tool, TapTool(), BoxSelectTool(), BoxZoomTool(), ResetTool(), WheelZoomTool(), PanTool())
+
+    graph_renderer = from_networkx(G, nx.spectral_layout, scale=1, center=(0,0))
+
+    graph_renderer.node_renderer.glyph = Circle(size=15, fill_color=Spectral4[0])
+    graph_renderer.node_renderer.selection_glyph = Circle(size=15, fill_color=Spectral4[2])
+    graph_renderer.node_renderer.hover_glyph = Circle(size=15, fill_color=Spectral4[1])
+
+    graph_renderer.edge_renderer.glyph = MultiLine(line_color="#CCCCCC", line_alpha=0.8, line_width=5)
+    graph_renderer.edge_renderer.selection_glyph = MultiLine(line_color=Spectral4[2], line_width=5)
+    graph_renderer.edge_renderer.hover_glyph = MultiLine(line_color=Spectral4[1], line_width=5)
+
+    graph_renderer.selection_policy = NodesAndLinkedEdges()
+
+    plot.renderers.append(graph_renderer)
+
+    output_file("interactive_dependencies.html")
+    show(plot)
+
+
 def main():
     file_path = Path(sys.argv[1])
     # filename = 'npr_code_enhet-0.0.0.6.1.0.3.nupkg'
@@ -44,21 +77,8 @@ def main():
         print(dep, degree)
     print('Packages:     ', len(G.nodes))
     print('Dependencies: ', len(G.edges))
-
-    plt.figure()
-    nx.draw_circular(G)
-    plt.savefig("circular.png")
-    plt.show()
-
-    plt.figure()
-    nx.draw_spring(G)
-    plt.savefig("spring.png")
-    plt.show()
-
-    plt.figure()
-    nx.draw_spectral(G)
-    plt.savefig("spectral.png")
-    plt.show()
+    bokeh_plot(G, file_path)
+    
 
 
 if __name__ == '__main__':
