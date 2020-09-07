@@ -2,13 +2,14 @@ import re
 import sys
 import zipfile
 from pathlib import Path
-# import networkx as nx
+import networkx as nx
+from matplotlib import pyplot as plt
 
 pattern = '<dependency id="(.+)" />'
 compiled_pattern = re.compile(pattern)
 
 
-def get_dependencies(file_path, tally, indent_level=1):
+def get_dependencies(file_path, G):
 
     dir_path = file_path.parent
 
@@ -25,21 +26,64 @@ def get_dependencies(file_path, tally, indent_level=1):
                 match = compiled_pattern.match(decoded_line)
                 if match:
                     dependency = match.group(1)
-                    package_path = list(dir_path.glob(dependency + '*.nupkg')).pop()
-                    if dependency in tally:
-                        tally[dependency] += 1
+                    package_path = list(
+                        dir_path.glob(dependency + '*.nupkg')).pop()
+                    if package_path.name in G:
+                        G.add_edge(file_path.name, package_path.name)
                     else:
-                        tally[dependency] = 1
-                        get_dependencies(package_path, tally, indent_level+1)
+                        G.add_edge(file_path.name, package_path.name)
+                        get_dependencies(package_path, G)
+
+
+def bokeh_plot(G, package, output_file_name, layout=nx.spectral_layout):
+    from bokeh.io import output_file, show
+    from bokeh.models import (BoxSelectTool, BoxZoomTool, Circle, HoverTool,
+                            MultiLine, NodesAndLinkedEdges, Plot, Range1d, TapTool,
+                            ResetTool, WheelZoomTool, PanTool)
+    from bokeh.palettes import Spectral4
+    from bokeh.plotting import from_networkx
+    
+    plot = Plot(plot_width=1500, plot_height=1000,
+                x_range=Range1d(-1.1,1.1), y_range=Range1d(-1.1,1.1))
+    plot.title.text = f'Dependency network for {package.name[:-6]}'
+
+    node_hover_tool = HoverTool(tooltips=[("index", "@index")])
+    plot.add_tools(node_hover_tool, TapTool(), BoxSelectTool(), BoxZoomTool(), ResetTool(), WheelZoomTool(), PanTool())
+
+    graph_renderer = from_networkx(G, layout, scale=1, center=(0,0))
+
+    graph_renderer.node_renderer.glyph = Circle(size=15, fill_color=Spectral4[0])
+    graph_renderer.node_renderer.selection_glyph = Circle(size=15, fill_color=Spectral4[2])
+    graph_renderer.node_renderer.hover_glyph = Circle(size=15, fill_color=Spectral4[1])
+
+    graph_renderer.edge_renderer.glyph = MultiLine(line_color="#CCCCCC", line_alpha=0.8, line_width=5)
+    graph_renderer.edge_renderer.selection_glyph = MultiLine(line_color=Spectral4[2], line_width=5)
+    graph_renderer.edge_renderer.hover_glyph = MultiLine(line_color=Spectral4[1], line_width=5)
+
+    graph_renderer.selection_policy = NodesAndLinkedEdges()
+
+    plot.renderers.append(graph_renderer)
+
+    output_file(output_file_name)
+    show(plot)
 
 
 def main():
     file_path = Path(sys.argv[1])
     # filename = 'npr_code_enhet-0.0.0.6.1.0.3.nupkg'
-    tally = {}
-    get_dependencies(file_path, tally)
-    for dep in sorted(tally, key=tally.get):
-        print(dep,":", tally[dep])
+    G = nx.DiGraph()
+    get_dependencies(file_path, G)
+    print()
+    print(f'Dependencies for {file_path.name[:-6]}'.upper())
+    print('\nTop 10 dependencies: ')
+    for dep, degree in sorted(G.degree, key=lambda item: item[1])[-10:]:
+        print(f'{dep:<40} : {degree}')
+    print(f'\n{"Packages":<40} : {len(G.nodes)}')
+    print(f'{"Dependencies":<40} : {len(G.edges)}')
+    print(f'{"Cycles":<40} : {len(list(nx.simple_cycles(G)))}')
+    bokeh_plot(G, file_path, "circular_layout.html", nx.circular_layout)
+    bokeh_plot(G, file_path, "spring_layout.html", nx.spring_layout)
+    bokeh_plot(G, file_path, "spectral_layout.html", nx.spectral_layout)
 
 
 if __name__ == '__main__':
