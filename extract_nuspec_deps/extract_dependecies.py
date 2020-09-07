@@ -78,7 +78,6 @@ def main():
     print('\nTop 10 dependencies: ')
     for dep, degree in sorted(G.degree, key=lambda item: item[1])[-10:]:
         print(f'{dep:<40} : {degree}')
-        # print(dep, degree)
     print(f'\n{"Packages":<40} : {len(G.nodes)}')
     print(f'{"Dependencies":<40} : {len(G.edges)}')
     print(f'{"Cycles":<40} : {len(list(nx.simple_cycles(G)))}')
