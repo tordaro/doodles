@@ -130,6 +130,7 @@ dmypy.json
 
 # Folders
 extract_nuspec_deps/packages/
+extract_nuspec_deps/figures/
 
 # Images
 *.png
