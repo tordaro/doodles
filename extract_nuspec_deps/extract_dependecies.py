@@ -45,7 +45,7 @@ def bokeh_plot(G, file_path):
     
     plot = Plot(plot_width=1500, plot_height=1000,
                 x_range=Range1d(-1.1,1.1), y_range=Range1d(-1.1,1.1))
-    plot.title.text = f'Dependencies for {file_path}'
+    plot.title.text = f'Dependency network for {file_path.name[:-6]}'
 
     node_hover_tool = HoverTool(tooltips=[("index", "@index")])
     plot.add_tools(node_hover_tool, TapTool(), BoxSelectTool(), BoxZoomTool(), ResetTool(), WheelZoomTool(), PanTool())
@@ -71,12 +71,13 @@ def bokeh_plot(G, file_path):
 def main():
     file_path = Path(sys.argv[1])
     # filename = 'npr_code_enhet-0.0.0.6.1.0.3.nupkg'
-    G = nx.Graph()
+    G = nx.DiGraph()
     get_dependencies(file_path, G)
     for dep, degree in sorted(G.degree, key=lambda item: item[1])[-10:]:
         print(dep, degree)
     print('Packages:     ', len(G.nodes))
     print('Dependencies: ', len(G.edges))
+    print('Cycles:       ', len(list(nx.simple_cycles(G))))
     bokeh_plot(G, file_path)
     
 
