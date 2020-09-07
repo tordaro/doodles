@@ -35,7 +35,7 @@ def get_dependencies(file_path, G):
                         get_dependencies(package_path, G)
 
 
-def bokeh_plot(G, file_path):
+def bokeh_plot(G, package, output_file_name, layout=nx.spectral_layout):
     from bokeh.io import output_file, show
     from bokeh.models import (BoxSelectTool, BoxZoomTool, Circle, HoverTool,
                             MultiLine, NodesAndLinkedEdges, Plot, Range1d, TapTool,
@@ -45,12 +45,12 @@ def bokeh_plot(G, file_path):
     
     plot = Plot(plot_width=1500, plot_height=1000,
                 x_range=Range1d(-1.1,1.1), y_range=Range1d(-1.1,1.1))
-    plot.title.text = f'Dependency network for {file_path.name[:-6]}'
+    plot.title.text = f'Dependency network for {package.name[:-6]}'
 
     node_hover_tool = HoverTool(tooltips=[("index", "@index")])
     plot.add_tools(node_hover_tool, TapTool(), BoxSelectTool(), BoxZoomTool(), ResetTool(), WheelZoomTool(), PanTool())
 
-    graph_renderer = from_networkx(G, nx.spectral_layout, scale=1, center=(0,0))
+    graph_renderer = from_networkx(G, layout, scale=1, center=(0,0))
 
     graph_renderer.node_renderer.glyph = Circle(size=15, fill_color=Spectral4[0])
     graph_renderer.node_renderer.selection_glyph = Circle(size=15, fill_color=Spectral4[2])
@@ -64,7 +64,7 @@ def bokeh_plot(G, file_path):
 
     plot.renderers.append(graph_renderer)
 
-    output_file("interactive_dependencies.html")
+    output_file(output_file_name)
     show(plot)
 
 
@@ -75,11 +75,13 @@ def main():
     get_dependencies(file_path, G)
     for dep, degree in sorted(G.degree, key=lambda item: item[1])[-10:]:
         print(dep, degree)
+    print()
     print('Packages:     ', len(G.nodes))
     print('Dependencies: ', len(G.edges))
     print('Cycles:       ', len(list(nx.simple_cycles(G))))
-    bokeh_plot(G, file_path)
-    
+    bokeh_plot(G, file_path, "circular_layout.html", nx.circular_layout)
+    bokeh_plot(G, file_path, "spring_layout.html", nx.spring_layout)
+    bokeh_plot(G, file_path, "spectral_layout.html", nx.spectral_layout)
 
 
 if __name__ == '__main__':
