@@ -73,12 +73,15 @@ def main():
     # filename = 'npr_code_enhet-0.0.0.6.1.0.3.nupkg'
     G = nx.DiGraph()
     get_dependencies(file_path, G)
-    for dep, degree in sorted(G.degree, key=lambda item: item[1])[-10:]:
-        print(dep, degree)
     print()
-    print('Packages:     ', len(G.nodes))
-    print('Dependencies: ', len(G.edges))
-    print('Cycles:       ', len(list(nx.simple_cycles(G))))
+    print(f'Dependencies for {file_path.name[:-6]}'.upper())
+    print('\nTop 10 dependencies: ')
+    for dep, degree in sorted(G.degree, key=lambda item: item[1])[-10:]:
+        print(f'{dep:<40} : {degree}')
+        # print(dep, degree)
+    print(f'\n{"Packages":<40} : {len(G.nodes)}')
+    print(f'{"Dependencies":<40} : {len(G.edges)}')
+    print(f'{"Cycles":<40} : {len(list(nx.simple_cycles(G)))}')
     bokeh_plot(G, file_path, "circular_layout.html", nx.circular_layout)
     bokeh_plot(G, file_path, "spring_layout.html", nx.spring_layout)
     bokeh_plot(G, file_path, "spectral_layout.html", nx.spectral_layout)
