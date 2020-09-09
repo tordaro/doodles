@@ -81,9 +81,9 @@ def main():
     print(f'\n{"Packages":<40} : {len(G.nodes)}')
     print(f'{"Dependencies":<40} : {len(G.edges)}')
     print(f'{"Cycles":<40} : {len(list(nx.simple_cycles(G)))}')
-    bokeh_plot(G, file_path, "circular_layout.html", nx.circular_layout)
-    bokeh_plot(G, file_path, "spring_layout.html", nx.spring_layout)
-    bokeh_plot(G, file_path, "spectral_layout.html", nx.spectral_layout)
+    bokeh_plot(G, file_path, f"figures/{file_path.name[:-6]}_circular_.html", nx.circular_layout)
+    bokeh_plot(G, file_path, f"figures/{file_path.name[:-6]}_spring.html", nx.spring_layout)
+    bokeh_plot(G, file_path, f"figures/{file_path.name[:-6]}_spectral.html", nx.spectral_layout)
 
 
 if __name__ == '__main__':
