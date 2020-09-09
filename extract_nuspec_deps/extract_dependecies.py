@@ -5,6 +5,13 @@ from pathlib import Path
 import networkx as nx
 from matplotlib import pyplot as plt
 
+from bokeh.io import output_file, show
+from bokeh.models import (BoxSelectTool, BoxZoomTool, Circle, HoverTool,
+                        MultiLine, NodesAndLinkedEdges, Plot, Range1d, TapTool,
+                        ResetTool, WheelZoomTool, PanTool)
+from bokeh.palettes import Spectral4
+from bokeh.plotting import from_networkx
+
 pattern = '<dependency id="(.+)" />'
 compiled_pattern = re.compile(pattern)
 
@@ -25,7 +32,7 @@ def get_dependencies(file_path, G):
                 decoded_line = line.decode('cp1252').strip()
                 match = compiled_pattern.match(decoded_line)
                 if match:
-                    dependency = match.group(1)
+                    dependency = match.group(1).lower()
                     package_path = list(
                         dir_path.glob(dependency + '*.nupkg')).pop()
                     if package_path.name in G:
@@ -36,13 +43,6 @@ def get_dependencies(file_path, G):
 
 
 def bokeh_plot(G, package, output_file_name, layout=nx.spectral_layout):
-    from bokeh.io import output_file, show
-    from bokeh.models import (BoxSelectTool, BoxZoomTool, Circle, HoverTool,
-                            MultiLine, NodesAndLinkedEdges, Plot, Range1d, TapTool,
-                            ResetTool, WheelZoomTool, PanTool)
-    from bokeh.palettes import Spectral4
-    from bokeh.plotting import from_networkx
-    
     plot = Plot(plot_width=1500, plot_height=1000,
                 x_range=Range1d(-1.1,1.1), y_range=Range1d(-1.1,1.1))
     plot.title.text = f'Dependency network for {package.name[:-6]}'
@@ -69,18 +69,18 @@ def bokeh_plot(G, package, output_file_name, layout=nx.spectral_layout):
 
 
 def main():
-    file_path = Path(sys.argv[1])
     # filename = 'npr_code_enhet-0.0.0.6.1.0.3.nupkg'
+    file_path = Path(sys.argv[1])
     G = nx.DiGraph()
     get_dependencies(file_path, G)
     print()
     print(f'Dependencies for {file_path.name[:-6]}'.upper())
     print('\nTop 10 dependencies: ')
     for dep, degree in sorted(G.degree, key=lambda item: item[1])[-10:]:
-        print(f'{dep:<40} : {degree}')
-    print(f'\n{"Packages":<40} : {len(G.nodes)}')
-    print(f'{"Dependencies":<40} : {len(G.edges)}')
-    print(f'{"Cycles":<40} : {len(list(nx.simple_cycles(G)))}')
+        print(f'{dep:<60} : {degree}')
+    print(f'\n{"Packages":<60} : {len(G.nodes)}')
+    print(f'{"Dependencies":<60} : {len(G.edges)}')
+    print(f'{"Cycles":60} : {len(list(nx.simple_cycles(G)))}')
     bokeh_plot(G, file_path, f"figures/{file_path.name[:-6]}_circular_.html", nx.circular_layout)
     bokeh_plot(G, file_path, f"figures/{file_path.name[:-6]}_spring.html", nx.spring_layout)
     bokeh_plot(G, file_path, f"figures/{file_path.name[:-6]}_spectral.html", nx.spectral_layout)
