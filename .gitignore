@@ -132,6 +132,7 @@ dmypy.json
 extract_nuspec_deps/packages/
 extract_nuspec_deps/packages-ord/
 extract_nuspec_deps/figures/
+extract_nuspec_deps/centrality/
 
 # Images
 *.png
