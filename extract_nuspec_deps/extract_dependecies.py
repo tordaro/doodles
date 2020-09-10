@@ -68,22 +68,54 @@ def bokeh_plot(G, package, output_file_name, layout=nx.spectral_layout):
     show(plot)
 
 
+def format_centrality(G):
+    centrality_list = []
+    sorted_degrees = sorted(G.degree, key=lambda item: item[1], reverse=True)
+    for dep, degree in sorted_degrees:
+        centrality_list.append(f'{dep:<60} : {degree}')
+    return centrality_list
+
+
+def print_centrality(centrality_list, package_name):
+    print()
+    print(f'Dependencies for {package_name}'.upper())
+    print('\nTop 10 dependencies: ')
+    for centrality in centrality_list[:10]:
+        print(centrality)
+    print()
+
+
+def store_centrality(centrality_list, file_name):
+    with open(file_name, 'w') as file:
+        for centrality in centrality_list:
+            file.write(centrality + '\n')
+
+
+def make_dirs(dir_list):
+    p = Path('.')
+    for dir_name in dir_list:
+        p.joinpath(dir_name).mkdir(exist_ok=True)
+
+
 def main():
     # filename = 'npr_code_enhet-0.0.0.6.1.0.3.nupkg'
+    dir_list = ['figures', 'centrality']
+    make_dirs(dir_list)
     file_path = Path(sys.argv[1])
+    package_name = file_path.name[:-6]
     G = nx.DiGraph()
     get_dependencies(file_path, G)
-    print()
-    print(f'Dependencies for {file_path.name[:-6]}'.upper())
-    print('\nTop 10 dependencies: ')
-    for dep, degree in sorted(G.degree, key=lambda item: item[1])[-10:]:
-        print(f'{dep:<60} : {degree}')
+    centrality_list = format_centrality(G)
+    store_centrality(centrality_list, Path('centrality') / (package_name+'.txt'))
+    print_centrality(centrality_list, package_name)
     print(f'\n{"Packages":<60} : {len(G.nodes)}')
     print(f'{"Dependencies":<60} : {len(G.edges)}')
     print(f'{"Cycles":60} : {len(list(nx.simple_cycles(G)))}')
-    bokeh_plot(G, file_path, f"figures/{file_path.name[:-6]}_circular_.html", nx.circular_layout)
-    bokeh_plot(G, file_path, f"figures/{file_path.name[:-6]}_spring.html", nx.spring_layout)
-    bokeh_plot(G, file_path, f"figures/{file_path.name[:-6]}_spectral.html", nx.spectral_layout)
+
+
+    bokeh_plot(G, file_path, f"figures/{package_name}_circular_.html", nx.circular_layout)
+    bokeh_plot(G, file_path, f"figures/{package_name}_spring.html", nx.spring_layout)
+    bokeh_plot(G, file_path, f"figures/{package_name}_spectral.html", nx.spectral_layout)
 
 
 if __name__ == '__main__':
