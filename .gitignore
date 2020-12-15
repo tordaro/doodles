@@ -136,3 +136,6 @@ extract_nuspec_deps/centrality/
 
 # Images
 *.png
+
+# Databases
+*.db
