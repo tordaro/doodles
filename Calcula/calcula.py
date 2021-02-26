@@ -83,7 +83,7 @@ def game(user, num_problems, func, lb1, up1, lb2, up2):
             except ValueError:
                 print("Answer must be an integer")
             # except KeyboardInterrupt:
-            #     print("\nYou're not quitting. Fuck you!")
+            #     print("\nYou're not quitting!")
 
         toc = time.perf_counter()
         tot_time = toc - tic
