@@ -5,7 +5,7 @@ standard_tuning = ["E", "A", "D", "G", "B", "E"]
 
 
 def get_fret(string, note):
-    displacement = standard_tuning.index(string)
+    displacement = scale.index(string)
     step = scale.index(note)
     return (step + 12 - displacement) % 12
 
