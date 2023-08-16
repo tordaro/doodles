@@ -3,10 +3,17 @@ from datetime import datetime
 
 
 @dataclass
+class Address:
+    street: str
+    postal_code: str
+    city: str
+
+
+@dataclass
 class Customer:
     name: str
-    address: str
     email: str
+    addresses: list[Address] = field(default_factory=list)
 
 
 @dataclass
@@ -28,9 +35,11 @@ class Plan:
 
 
 def main():
-    customer = Customer("Bruce", "Batcave 69", "bat@man.com")
+    address = Address("Batcase 69", "8069", "Gotham")
+    customer = Customer("Bruce", address, "bat@man.com")
     phone = Phone("Nokia", "3310", 99.99, 987345)
     plan = Plan(customer, phone, datetime.now(), 12, 9.99, True)
+    print(address)
     print(customer)
     print(phone)
     print(plan)
