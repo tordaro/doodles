@@ -2,7 +2,7 @@
 
 Convert the following classes into dataclasses such that the initializers that the dataclass generates have the same behavior as the regular class:
 
-´´´python
+```python
 class A:
   def __init__(self) -> None:
     self._length = 0
@@ -17,7 +17,7 @@ class C:
   def __init__(self, a: int = 3) -> None:
     self.a = a
     self.b = a + 3
-´´´
+```
 
 ## 2. Let's sell some phones
 
