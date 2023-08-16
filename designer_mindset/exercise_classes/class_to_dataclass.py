@@ -24,15 +24,15 @@ class C:
 
 def main():
     a = A()
-    print(a._length)
+    print(a)
 
     b1 = B(5, "batman", [2, 3, 4])
-    print(b1.x, b1.y, b1.l)
+    print(b1)
     b2 = B(x=1)
-    print(b2.x, b2.y, b2.l)
+    print(b2)
 
     c = C(4)
-    print(c.a, c.b)
+    print(c)
 
 
 if __name__ == "__main__":
