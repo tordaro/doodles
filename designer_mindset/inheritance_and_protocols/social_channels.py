@@ -1,11 +1,55 @@
+from abc import ABC, abstractmethod
 from time import time
 from dataclasses import dataclass
 
 
-@dataclass
-class SocialChannel:
-    type: str
+class SocialChannel(ABC):
     followers: int
+
+    @abstractmethod
+    def post_message(self, message: str) -> None:
+        pass
+
+    @property
+    @abstractmethod
+    def type(self) -> str:
+        pass
+
+
+@dataclass
+class YouTubeChannel(SocialChannel):
+    followers: int
+
+    def post_message(self, message: str) -> None:
+        print(f"{self.type} channel: {message}")
+
+    @property
+    def type(self) -> str:
+        return "youtube"
+
+
+@dataclass
+class FacebookChannel(SocialChannel):
+    followers: int
+
+    def post_message(self, message: str) -> None:
+        print(f"{self.type} channel: {message}")
+
+    @property
+    def type(self) -> str:
+        return "facebook"
+
+
+@dataclass
+class TwitterChannel(SocialChannel):
+    followers: int
+
+    def post_message(self, message: str) -> None:
+        print(f"{self.type} channel: {message}")
+
+    @property
+    def type(self) -> str:
+        return "twitter"
 
 
 @dataclass
@@ -14,32 +58,11 @@ class Post:
     timestamp: int
 
 
-def post_to_youtube(channel: SocialChannel, message: str) -> None:
-    print(f"{channel.type} channel: {message}")
-
-
-def post_to_facebook(channel: SocialChannel, message: str) -> None:
-    print(f"{channel.type} channel: {message}")
-
-
-def post_to_twitter(channel: SocialChannel, message: str) -> None:
-    print(f"{channel.type} channel: {message}")
-
-
-def post_a_message(channel: SocialChannel, message: str) -> None:
-    if channel.type == "youtube":
-        post_to_youtube(channel, message)
-    elif channel.type == "facebook":
-        post_to_facebook(channel, message)
-    elif channel.type == "twitter":
-        post_to_twitter(channel, message)
-
-
 def process_schedule(posts: list[Post], channels: list[SocialChannel]) -> None:
     for post in posts:
         for channel in channels:
             if post.timestamp <= time():
-                post_a_message(channel, post.message)
+                channel.post_message(post.message)
 
 
 def main() -> None:
@@ -51,9 +74,9 @@ def main() -> None:
         Post("Get your carrot cake now, the promotion ends today!", 1568133400),
     ]
     channels = [
-        SocialChannel("youtube", 100),
-        SocialChannel("facebook", 100),
-        SocialChannel("twitter", 100),
+        YouTubeChannel(100),
+        FacebookChannel(100),
+        TwitterChannel(100),
     ]
     process_schedule(posts, channels)
 
