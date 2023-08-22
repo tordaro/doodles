@@ -139,3 +139,6 @@ extract_nuspec_deps/centrality/
 
 # Databases
 *.db
+
+# Certificates
+*.pem
