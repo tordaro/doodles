@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 
 @dataclass
 class Nutrition:
+    # TODO: Use relative nutritional values
     protein: float
     carb: float
     fat: float
