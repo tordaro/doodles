@@ -43,6 +43,7 @@ class Movement(Composite):
         return self.equipment
 
     def get_dependencies(self) -> dict[str, str]:
+        # TODO: Implement validation function that ensures that the dependencies match the work formula
         return self.dependencies
 
     def calculate_work(self, dependencies: dict[str, float]) -> float:
