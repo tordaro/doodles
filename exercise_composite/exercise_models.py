@@ -84,21 +84,12 @@ class Exercise(Composite):
 
 
 def main():
-    deadlift = Movement(
-        name="Deadlift",
-        work_formula="leg_length * mass * g",
-        dependencies={"leg_length": "Length of legs", "mass": "Total mass"},
-        equipment={"Barbell", "Locks"},
-    )
-    front_squat = Movement(
-        name="Front squat",
-        work_formula="upper_leg_length * mass * g",
-        dependencies={"upper_leg_length": "Length of upper legs", "mass": "Total mass"},
+    clean = Movement(
+        name="Clean",
+        work_formula="(leg_length + trunk_length) * mass * g",
+        dependencies={"leg_length": "Length of legs", "trunk_length": "Length of trunk", "mass": "Total mass"},
         equipment={"Barbell", "Shoes"},
     )
-    clean = Exercise("Clean")
-    clean.add(deadlift)
-    clean.add(front_squat)
 
     jerk = Movement(
         name="Jerk",
@@ -109,7 +100,7 @@ def main():
     clean_jerk = Exercise("Clean & Jerk")
     clean_jerk.add(clean)
     clean_jerk.add(jerk)
-    dependencies = {"leg_length": 0.9, "upper_leg_length": 0.5, "mass": 50, "arm_length": 0.25 + 0.28}
+    dependencies = {"leg_length": 0.9, "trunk_length": 0.6, "mass": 80, "arm_length": 0.25 + 0.28}
     print(clean_jerk)
     print(clean_jerk.get_dependencies())
 
