@@ -110,11 +110,12 @@ def main():
     clean_jerk.add(clean)
     clean_jerk.add(jerk)
     dependencies = {"leg_length": 0.9, "upper_leg_length": 0.5, "mass": 50, "arm_length": 0.25 + 0.28}
-
     print(clean_jerk)
-    print(clean_jerk.get_equipment())
     print(clean_jerk.get_dependencies())
-    print(clean_jerk.calculate_work(dependencies))
+
+    print(f"\n{clean_jerk.name}: ")
+    print("Needed equipment: ", " ,".join(clean_jerk.get_equipment()))
+    print(f"{clean_jerk.calculate_work(dependencies):.2f} kcal per rep")
 
 
 if __name__ == "__main__":
