@@ -42,10 +42,6 @@ class Movement(Composite):
     def get_equipment(self) -> set[str]:
         return self.equipment
 
-    def get_dependencies(self) -> dict[str, str]:
-        # TODO: Implement validation function that ensures that the dependencies match the work formula
-        return self.dependencies
-
     def calculate_work(self, dependencies: dict[str, float]) -> float:
         kcal = 4184.0
         constants = {"g": 9.80665}
