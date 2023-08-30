@@ -4,7 +4,7 @@ from typing import Protocol
 
 
 class Pricing(Protocol):
-    def get_total_price(self):
+    def get_total_price(self) -> int:
         ...
 
 
