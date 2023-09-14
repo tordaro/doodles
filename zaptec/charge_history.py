@@ -7,7 +7,9 @@ access_token = os.getenv("ZAPTEC_TOKEN")
 
 headers = {"Authorization": f"Bearer {access_token}"}
 
-response = requests.get(endpoint_url, headers=headers, verify=False)
+params = {"UserId": ""}
+
+response = requests.get(endpoint_url, headers=headers, verify=False, params=params)
 
 if response.status_code == 200:
     data = response.json()
