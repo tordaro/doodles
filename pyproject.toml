@@ -10,6 +10,9 @@ python = "^3.11"
 requests = "^2.31.0"
 mypy = "^1.5.1"
 types-requests = "^2.31.0.2"
+numpy = "^1.25.2"
+numexpr = "^2.8.5"
+ipython = "^8.14.0"
 
 
 [tool.poetry.group.dev.dependencies]
