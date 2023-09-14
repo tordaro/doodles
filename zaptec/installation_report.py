@@ -12,12 +12,11 @@ headers = {
 }
 
 data = {
-    "fromDate": "2023-08-01T11:47:19.986Z",
-    "endDate": "2023-08-21T11:47:19.986Z",
-    "installationid": "",
-    "userids": [""],
-    "chargerids": [""],
-    "groupby": 0,
+    "fromDate": "2023-09-01T11:47:19.986",
+    "endDate": "2023-09-08T11:47:19.986",
+    "installationId": "",
+    # "userIds": [""],
+    "groupBy": 0,
 }
 
 response = requests.post(endpoint_url, headers=headers, data=json.dumps(data), verify=False)
