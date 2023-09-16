@@ -1,5 +1,4 @@
 import os
-from typing import Iterable
 import requests
 from datetime import datetime, timedelta
 from pprint import pprint
