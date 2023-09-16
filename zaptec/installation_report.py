@@ -15,7 +15,6 @@ data = {
     "fromDate": "2023-09-01T11:47:19.986",
     "endDate": "2023-09-08T11:47:19.986",
     "installationId": "",
-    # "userIds": [""],
     "groupBy": 0,
 }
 
