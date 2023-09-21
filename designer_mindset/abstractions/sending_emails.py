@@ -1,4 +1,4 @@
-from smtplib import SMTP
+from typing import Protocol
 
 DEFAULT_EMAIL = "support@arjancodes.com"
 LOGIN = "test"
@@ -7,10 +7,21 @@ HOST = "smtp.arjancodes.com"
 PORT = 19584
 
 
-def send_email(
-    message: str, to_address: str, from_address: str = DEFAULT_EMAIL
-) -> None:
-    server = SMTP()
+class MessageServer(Protocol):
+    def connect(self, host: str, port: int) -> None:
+        ...
+
+    def login(self, username: str, password: str) -> None:
+        ...
+
+    def sendmail(self, from_address: str, to_address: str, message: str) -> None:
+        ...
+
+    def quit(self) -> None:
+        ...
+
+
+def send_email(server: MessageServer, message: str, to_address: str, from_address: str = DEFAULT_EMAIL) -> None:
     server.connect(HOST, PORT)
     server.login(LOGIN, PASSWORD)
     server.sendmail(from_address, to_address, message)
