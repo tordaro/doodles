@@ -24,8 +24,7 @@ class Browser:
     def open(self, url: str) -> None:
         print(f"Opening {url} in the browser.")
 
-    def open_from_qr_code(self) -> None:
-        qr = QRScanner()
+    def open_from_qr_code(self, qr: QRScanner) -> None:
         qr.choose_camera(Camera.BACK)
         url = qr.scan()
         self.open(url)
@@ -33,8 +32,9 @@ class Browser:
 
 def main() -> None:
     print("Navigating to website on device.")
+    qr = QRScanner()
     browser = Browser()
-    browser.open_from_qr_code()
+    browser.open_from_qr_code(qr)
 
 
 if __name__ == "__main__":
