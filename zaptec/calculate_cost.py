@@ -83,8 +83,8 @@ def calculate_price(data: list[dict], prices: dict[str, list]) -> dict[str, dict
 
 def main():
     access_token = os.getenv("ZAPTEC_TOKEN")
-    installation_id = "5fdd61e6-989b-4d2e-ab75-68e1ee9141cf"
-    from_date = datetime(year=2023, month=8, day=5)
+    installation_id = os.getenv("INSTALLATION_ID")
+    from_date = datetime(year=2023, month=9, day=5)
     to_date = datetime(year=2023, month=9, day=14)
     charge_history = request_charge_history(access_token, installation_id, from_date, to_date)
     if charge_history.status_code == 200:
