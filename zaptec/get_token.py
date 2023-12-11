@@ -22,3 +22,6 @@ def main():
         print(f"Access Token: {access_token}")
     else:
         print(f"Failed to obtain token. Status code: {response.status_code}, Error: {response.text}")
+
+if __name__ == "__main__":
+    main()
