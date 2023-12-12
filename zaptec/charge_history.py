@@ -1,14 +1,17 @@
 import os
-import requests
+import json
+import urllib3
 from datetime import datetime
 from pprint import pprint
 from dotenv import load_dotenv
 
 load_dotenv()
 
+http = urllib3.PoolManager()
+
 def request_charge_history(
     access_token: str, installation_id: str, from_date: datetime, to_date: datetime
-) -> requests.Response:
+) -> urllib3.response.HTTPResponse:
     datetime_format = "%Y-%m-%dT%H:%M:%S.%f%z"
     endpoint_url = "https://api.zaptec.com/api/chargehistory"
     params = {
@@ -18,20 +21,9 @@ def request_charge_history(
         "From": from_date.strftime(datetime_format),
         "To": to_date.strftime(datetime_format),
     }
-    headers = {"accept": "application/json", "Authorization": f"Bearer {access_token}"}
+    headers = {"Authorization": f"Bearer {access_token}", "Content-Type": "application/json-patch+json"}
 
-    try:
-        response = requests.get(endpoint_url, headers=headers, params=params)
-        print(response.headers)
-        response.raise_for_status()  # Raises an HTTPError if the HTTP request returned an unsuccessful status code
-    except requests.exceptions.HTTPError as errh:
-        print("Http Error:", errh)
-    except requests.exceptions.ConnectionError as errc:
-        print("Error Connecting:", errc)
-    except requests.exceptions.Timeout as errt:
-        print("Timeout Error:", errt)
-    except requests.exceptions.RequestException as err:
-        print("OOps: Something Else", err)
+    response = http.request('GET', endpoint_url, headers=headers, fields=params)
 
     return response
 
@@ -43,8 +35,8 @@ def main():
     to_date = datetime(year=2023, month=9, day=5)
     response = request_charge_history(access_token, installation_id, from_date, to_date)
 
-    if response.status_code == 200:
-        data = response.json()["Data"]
+    if response.status == 200:
+        data = json.loads(response.data)["Data"]
         for session in data:
             pprint(session["EnergyDetails"])
             pprint(session["Energy"])
@@ -54,7 +46,7 @@ def main():
             pprint(session["DeviceName"])
             print()
     else:
-        print(f"Request failed with status code: {response.status_code}. Error: {response.text}")
+        print(f"Request failed with status code: {response.status}. Error: {response.data.decode('utf-8')}")
 
 
 if __name__ == "__main__":
